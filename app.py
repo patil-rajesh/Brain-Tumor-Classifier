@@ -10,14 +10,23 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 import keras
-if hasattr(tf.keras.layers, 'InputLayer'):
-    # This forces Keras to accept 'batch_shape' even if it expects 'batch_input_shape'
-    class FixedInputLayer(tf.keras.layers.InputLayer):
-        def __init__(self, **kwargs):
-            if 'batch_shape' in kwargs:
-                kwargs['batch_input_shape'] = kwargs.pop('batch_shape')
-            super().__init__(**kwargs)
-    tf.keras.utils.get_custom_objects()['InputLayer'] = FixedInputLayer
+
+if not hasattr(keras, 'DTypePolicy'):
+    class DTypePolicy:
+        def __init__(self, name="float32", **kwargs):
+            self.name = name
+        @classmethod
+        def from_config(cls, config):
+            return cls(**config)
+    tf.keras.utils.get_custom_objects()['DTypePolicy'] = DTypePolicy
+
+class FixedInputLayer(tf.keras.layers.InputLayer):
+    def __init__(self, **kwargs):
+        if 'batch_shape' in kwargs:
+            kwargs['batch_input_shape'] = kwargs.pop('batch_shape')
+        super().__init__(**kwargs)
+tf.keras.utils.get_custom_objects()['InputLayer'] = FixedInputLayer
+
 
 # ======================================================
 # PAGE CONFIG - Forced Sidebar Expanded
