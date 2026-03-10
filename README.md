@@ -6,7 +6,7 @@
 <div align="center">
 
 <noautolink>
-  <a href="https://your-demo-link.streamlit.app" target="_blank">
+  <a href="https://brain-tumor-classifier-bypatilrajesh.streamlit.app/" target="_blank">
     <img src="https://img.shields.io/badge/🚀%20LIVE%20DEMO-DIRECT%20ACCESS-blue?style=for-the-badge&logo=streamlit&logoColor=white" alt="Live Demo Button" />
   </a>
 </noautolink>
