@@ -15,11 +15,17 @@ if not hasattr(keras, 'DTypePolicy'):
     class DTypePolicy:
         def __init__(self, name="float32", **kwargs):
             self.name = name
+            # Keras 2 internal logic looks for these two specifically:
+            self.compute_dtype = name
+            self.variable_dtype = name
         @classmethod
         def from_config(cls, config):
             return cls(**config)
+        def get_config(self):
+            return {'name': self.name}
     tf.keras.utils.get_custom_objects()['DTypePolicy'] = DTypePolicy
 
+# Fix the InputLayer mismatch
 class FixedInputLayer(tf.keras.layers.InputLayer):
     def __init__(self, **kwargs):
         if 'batch_shape' in kwargs:
