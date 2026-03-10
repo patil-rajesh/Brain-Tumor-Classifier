@@ -4,6 +4,6 @@ numpy
 opencv-python-headless
 Pillow
 plotly
-pandas
 matplotlib
 seaborn
+scikit-learn
