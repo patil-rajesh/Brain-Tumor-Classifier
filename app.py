@@ -10,7 +10,7 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix
 import keras
 
-# --- REVISED COMPATIBILITY PATCH ---
+# --- THE DEFINITIVE FIX FOR 'as_list' ERROR ---
 if not hasattr(keras, 'DTypePolicy'):
     class DTypePolicy:
         def __init__(self, name="float32", **kwargs):
@@ -24,12 +24,12 @@ if not hasattr(keras, 'DTypePolicy'):
 
 class FixedInputLayer(tf.keras.layers.InputLayer):
     def __init__(self, **kwargs):
+        # Keras 3 uses 'batch_shape', Keras 2 uses 'batch_input_shape'
         if 'batch_shape' in kwargs:
             kwargs['batch_input_shape'] = kwargs.pop('batch_shape')
         super().__init__(**kwargs)
     def get_config(self):
-        config = super().get_config()
-        return config
+        return super().get_config()
 
 tf.keras.utils.get_custom_objects()['InputLayer'] = FixedInputLayer
 # --- END PATCH ---
@@ -93,14 +93,14 @@ html, body, [class*="css"] { font-family: 'Plus Jakarta Sans', sans-serif; }
 def get_model():
     if os.path.exists("tumor_model.h5"):
         try:
-            # We pass our custom fixed layers directly into the loader
+            # Explicitly passing custom_objects here is critical
             return tf.keras.models.load_model(
                 "tumor_model.h5",
                 custom_objects={
                     "DTypePolicy": DTypePolicy,
                     "InputLayer": FixedInputLayer
                 },
-                compile=False # Adding this prevents 'Optimizer' version errors
+                compile=False  # This skips loading the optimizer which often causes 'as_list' errors
             )
         except Exception as e:
             st.error(f"Error loading model: {e}")
