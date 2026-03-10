@@ -8,7 +8,6 @@ import random
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
-import keras
 
 # --- THE DEFINITIVE FIX FOR 'as_list' ERROR ---
 if not hasattr(keras, 'DTypePolicy'):
@@ -91,21 +90,12 @@ html, body, [class*="css"] { font-family: 'Plus Jakarta Sans', sans-serif; }
 # ======================================================
 @st.cache_resource
 def get_model():
-    if os.path.exists("tumor_model.h5"):
-        try:
-            # Explicitly passing custom_objects here is critical
-            return tf.keras.models.load_model(
-                "tumor_model.h5",
-                custom_objects={
-                    "DTypePolicy": DTypePolicy,
-                    "InputLayer": FixedInputLayer
-                },
-                compile=False  # This skips loading the optimizer which often causes 'as_list' errors
-            )
-        except Exception as e:
-            st.error(f"Error loading model: {e}")
-            return None
-    return None
+    try:
+        model = tf.keras.models.load_model("tumor_model.h5", compile=False)
+        return model
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+        return None
 
 model = get_model()
 class_names = ["Glioma", "Meningioma", "No Tumor", "Pituitary"]
