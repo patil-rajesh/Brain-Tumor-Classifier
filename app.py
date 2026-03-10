@@ -67,7 +67,7 @@ html, body, [class*="css"] { font-family: 'Plus Jakarta Sans', sans-serif; }
 @st.cache_resource
 def get_model():
     try:
-        model = tf.keras.models.load_model("tumor_model.h5", compile=False)
+        model = tf.keras.models.load_model("tumor_model.keras", compile=False)
         return model
     except Exception as e:
         st.error(f"Error loading model: {e}")
