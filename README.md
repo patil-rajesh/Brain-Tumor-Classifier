@@ -13,12 +13,18 @@
 
 </div>
 
+<div align="center">
+  <img src="assets/dashboard.png" width="800px" alt="Dashboard Preview">
+</div>
+
 ---
 
 ## 🚀 **Project Overview**
 The **Brain Tumor Classifier Model** is a state-of-the-art deep learning solution designed to assist medical professionals in identifying and categorizing brain tumors from MRI scans. By combining a high-performance **Convolutional Neural Network (CNN)** with an intuitive, Figma-inspired interface, this tool bridges the gap between complex AI and clinical usability.
 
-[Image of a professional medical imaging software interface showing MRI scans and classification results]
+<div align="center">
+  <img src="assets/Mri.png" width="800px" alt="Dashboard Preview">
+</div>
 
 ---
 
@@ -42,7 +48,6 @@ The model has been rigorously validated to ensure clinical reliability and preci
 | **Recall** | **94.8%** | ✅ |
 | **F1-Score** | **95.0%** | ✅ |
 
-[Image of a line graph showing the training and validation accuracy and loss over 20 epochs]
 
 ---
 
@@ -59,7 +64,9 @@ The model has been rigorously validated to ensure clinical reliability and preci
 ## 🧩 **Explainable AI: How it Works**
 The model utilizes **Grad-CAM** (Gradient-weighted Class Activation Mapping). This technique uses the gradients of the target class flowing into the final convolutional layer to produce a localization map highlighting the important regions in the image.
 
-[Image of Grad-CAM heatmap overlay on a brain MRI scan highlighting tumor location]
+<div align="center">
+  <img src="assets/gradcam.png" width="800px" alt="Dashboard Preview">
+</div>
 
 ---
 
