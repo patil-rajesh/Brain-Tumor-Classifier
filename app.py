@@ -9,30 +9,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
-# --- THE DEFINITIVE FIX FOR 'as_list' ERROR ---
-if not hasattr(keras, 'DTypePolicy'):
-    class DTypePolicy:
-        def __init__(self, name="float32", **kwargs):
-            self.name = name
-            self.compute_dtype = name
-            self.variable_dtype = name
-        @classmethod
-        def from_config(cls, config): return cls(**config)
-        def get_config(self): return {'name': self.name}
-    tf.keras.utils.get_custom_objects()['DTypePolicy'] = DTypePolicy
-
-class FixedInputLayer(tf.keras.layers.InputLayer):
-    def __init__(self, **kwargs):
-        # Keras 3 uses 'batch_shape', Keras 2 uses 'batch_input_shape'
-        if 'batch_shape' in kwargs:
-            kwargs['batch_input_shape'] = kwargs.pop('batch_shape')
-        super().__init__(**kwargs)
-    def get_config(self):
-        return super().get_config()
-
-tf.keras.utils.get_custom_objects()['InputLayer'] = FixedInputLayer
-# --- END PATCH ---
-
 st.set_page_config(
     page_title="Brain Tumor Classifier Model | Dashboard",
     page_icon="🧠",
