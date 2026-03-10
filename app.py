@@ -10,9 +10,7 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix
 import keras
 
-# ======================================================
-# --- ROBUST COMPATIBILITY FIX (Keras 3 to 2) ---
-# ======================================================
+# --- REVISED COMPATIBILITY PATCH ---
 if not hasattr(keras, 'DTypePolicy'):
     class DTypePolicy:
         def __init__(self, name="float32", **kwargs):
@@ -20,10 +18,8 @@ if not hasattr(keras, 'DTypePolicy'):
             self.compute_dtype = name
             self.variable_dtype = name
         @classmethod
-        def from_config(cls, config):
-            return cls(**config)
-        def get_config(self):
-            return {'name': self.name}
+        def from_config(cls, config): return cls(**config)
+        def get_config(self): return {'name': self.name}
     tf.keras.utils.get_custom_objects()['DTypePolicy'] = DTypePolicy
 
 class FixedInputLayer(tf.keras.layers.InputLayer):
@@ -31,11 +27,13 @@ class FixedInputLayer(tf.keras.layers.InputLayer):
         if 'batch_shape' in kwargs:
             kwargs['batch_input_shape'] = kwargs.pop('batch_shape')
         super().__init__(**kwargs)
-tf.keras.utils.get_custom_objects()['InputLayer'] = FixedInputLayer
+    def get_config(self):
+        config = super().get_config()
+        return config
 
-# ======================================================
-# PAGE CONFIG
-# ======================================================
+tf.keras.utils.get_custom_objects()['InputLayer'] = FixedInputLayer
+# --- END PATCH ---
+
 st.set_page_config(
     page_title="Brain Tumor Classifier Model | Dashboard",
     page_icon="🧠",
@@ -94,8 +92,19 @@ html, body, [class*="css"] { font-family: 'Plus Jakarta Sans', sans-serif; }
 @st.cache_resource
 def get_model():
     if os.path.exists("tumor_model.h5"):
-        # The custom_objects mapping ensures Keras uses our fixed layers
-        return tf.keras.models.load_model("tumor_model.h5")
+        try:
+            # We pass our custom fixed layers directly into the loader
+            return tf.keras.models.load_model(
+                "tumor_model.h5",
+                custom_objects={
+                    "DTypePolicy": DTypePolicy,
+                    "InputLayer": FixedInputLayer
+                },
+                compile=False # Adding this prevents 'Optimizer' version errors
+            )
+        except Exception as e:
+            st.error(f"Error loading model: {e}")
+            return None
     return None
 
 model = get_model()
